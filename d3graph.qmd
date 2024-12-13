@@ -1,13 +1,37 @@
+
 # Interactive graph
 
-<style>
-  * {
-    font-family: sans-serif;
-  }
-</style> 
+---
+title: "Interactive graph"
+format: html
+resources:
+  - data_d3.csv
+---
 
-<div id="plot">
-</div>
+<style>
+    .controls {
+        margin-bottom: 20px;
+    }
+    .legend {
+        font-size: 14px;
+    }
+    .legend rect {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+    }
+    .legend text {
+        vertical-align: middle;
+    }
+</style>
+
+
+<div id="plot1"></div>
+<div id="plot2"></div>
+
+
 
 <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src=""https://d3js.org/d3.v7.min.js""></script>
+
 <script src="scripts/myscript.js"></script>
