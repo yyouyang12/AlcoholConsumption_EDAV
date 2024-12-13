@@ -2,7 +2,7 @@
 
 ## Import libraries
 
-```{r}
+```{r, warning = FALSE, message = FALSE}
 #| echo: true
 #| message: false
 library(dplyr)
@@ -697,3 +697,4 @@ From the right chart of Figure 12, as alcohol consumption frequency increases, t
 Though 60% of individuals with AUD consume fewer than 8 drinks per week, the refined categorization of the dependent variable allows us to detect meaningful differences between healthy individuals and those with AUD. In summary, although AUD should not be simplistically equated with heavy drinking, individuals with AUD indeed have a higher likelihood of engaging in heavy drinking. Thus, the drinking behaviors of individuals with AUD deserve more attention and targeted interventions.
 
 Our interactive design aims to highlight the overlap between individuals with Alcohol Use Disorder (AUD) and those who are heavy drinkers. The visualization shows that while there is a significant relationship between AUD and heavy drinking, it is not absolute. Readers can explore these patterns in the 'Interactive graph' section to investigate the data interactively.
+
