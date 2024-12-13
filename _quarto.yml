@@ -23,6 +23,7 @@ book:
     - d3graph.qmd
     - conclusion.qmd
 
+
 format:
   html:
     theme: Journal
