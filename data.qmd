@@ -1,5 +1,110 @@
 # Data
 
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(ggplot2)
+library(ggplot2)
+library(naniar)
+library(tidyr)
+
+data <- readxl::read_excel("well_being_data_short.xlsx")
+
+
+data_with_na <- data %>%
+  mutate(across(everything(), ~ ifelse(grepl("\\(98\\)|\\(99\\)", .), NA, .)))
+
+```
+
 ## Description
 
+The dataset used in this project originates from the Inter-university Consortium for Political and Social Research (ICPSR), specifically study 39192. Collected via survey in 2023, the data aims to investigate various factors related to well-being and health. The source data is provided in multiple formats; for this project, we used the .RData format, which was loaded into R for analysis. We also converted it into a .csv file as a backup for easier inspection and sharing.
+
+The complete dataset comprises 7,105 rows and 348 columns. For this study, we focus on a sliced version of the data, selecting 14 columns in total: 2 columns related to alcohol consumption and 12 columns related to health conditions, particularly chronic and mental health conditions. The accompanying data codebook provides detailed documentation on the dataset's background, structure, and variable definitions. Upon inspection using the codebook, no significant data quality issues were identified.
+
+We conducted exploratory analysis in R, leveraging its robust data manipulation and visualization capabilities. The dataset is publicly available through the [ICPSR website](https://www.icpsr.umich.edu/web/NAHDAP/studies/39192/datadocumentation#), and additional documentation can be accessed at the provided link.
+
 ## Missing value analysis
+
+The dataset's codebook specifies clear notations for missing values. Each entry follows the format `(n) <value>`, where `(n)` is the coded version of the information and `<value>` is the survey response. Missing data are represented by either `"(98) Don't know"` or `"(99) Refusal"`, while valid responses are coded with smaller integers. This explicit notation simplifies the handling of missing data during preprocessing. To ensure the integrity of our analysis, we removed all rows containing any missing values. After processing, the dataset was reduced to approximately 5,600 rows.
+
+Visualizations are included below to illustrate the distribution and patterns of missing values before cleaning. From the cumulative missing values plot, we observe a gradual and consistent accumulation of missing data across rows, without sudden spikes or concentrations. This indicates that missingness is evenly distributed throughout the dataset and not concentrated in specific subsets of observations.
+
+```{r}
+# Count cumulative missing values for each row
+row_missing <- data_with_na %>%
+  mutate(MissingCount = rowSums(is.na(.))) %>%
+  mutate(CumulativeMissing = cumsum(MissingCount))  # Calculate cumulative sum
+
+# Plot cumulative missing values across rows
+ggplot(row_missing, aes(x = seq_along(CumulativeMissing), y = CumulativeMissing)) +
+  geom_line(color = "steelblue") +
+  labs(title = "Cumulative Missing Data Across Rows",
+       x = "Row Index",
+       y = "Cumulative Missing Values") +
+  theme_minimal()
+
+
+```
+
+The bar chart provides a variable-level overview of missingness. It highlights that certain variables, such as `HIGH_BP`, `HIGH_CHOL`, and `PTSD`, have the highest numbers of missing entries, each exceeding 300. In contrast, variables such as ALCOHOL and ALC_NUM exhibit minimal missingness, with fewer than 5 missing entries each. This suggests that missing data is more prevalent in health-related variables, possibly because respondents were less willing or able to provide detailed health information.
+
+```{r}
+# Replace (98) and (99) with NA in the dataset
+# data_with_na <- data %>%
+#   mutate(across(everything(), ~ ifelse(grepl("\\(98\\)|\\(99\\)", .), NA, .)))
+
+# Heatmap of missing data
+gg_miss_var(data_with_na) +
+  labs(title = "Bar Chart of Missing Data", y = "Number of Missing Values")
+
+
+# Count missing values per column
+missing_summary <- data_with_na %>%
+  summarise(across(everything(), ~ sum(is.na(.)))) %>%
+  pivot_longer(everything(), names_to = "Variable", values_to = "MissingCount")
+
+
+
+```
+
+## Data preprocessing
+
+```{r}
+# Encode certain entry as NA and remove them
+# Drop all NA values
+data_clean <- data_with_na %>%
+  drop_na()
+
+# Remove prefixes from all columns
+data_cleaned <- data_clean %>%
+  mutate(across(everything(), ~ gsub("\\(\\d+\\) ", "", .)))
+
+# Write clean data to csv
+write.csv(data_cleaned, "data_cleaned.csv", row.names = FALSE)
+```
+
+```{r}
+data_cleaned_aggr <- data_cleaned %>%
+  mutate(ALC_NUM_CATE = case_when(
+    ALC_NUM == "Question was not asked" ~ 1,
+    ALC_NUM == "Did not consume any alcohol in the past 30 days" ~ 1,
+    ALC_NUM == "Average of 1 or fewer drinks per week" ~ 1,
+    ALC_NUM == "Average of 2-4 drinks per week" ~ 2,
+    ALC_NUM == "Average of 5-7 drinks per week" ~ 2,
+    ALC_NUM == "Average of 8-15 drinks per week" ~ 3,
+    ALC_NUM == "Average of more than 15 drinks per week" ~ 3
+  )) %>%
+  mutate(ALC_NUM_CATE = factor(ALC_NUM_CATE, labels = c("Low", "Moderate", "High")))
+
+data_cleaned_aggr$Combined_Condition <- ifelse(
+  data_cleaned_aggr$HIGH_BP == "Yes" | 
+  data_cleaned_aggr$DRUG_DIS == "Yes" | 
+  data_cleaned_aggr$ALC_DIS == "Yes", 
+  "Yes", 
+  "No"
+)
+data_d3 = data_cleaned_aggr %>% 
+  select(HIGH_BP, ALC_DIS, DRUG_DIS, ALC_NUM_CATE)
+
+write.csv(data_d3, "data_d3.csv", row.names = FALSE)
+```
