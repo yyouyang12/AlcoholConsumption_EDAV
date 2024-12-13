@@ -1,4 +1,3 @@
-
 # Interactive graph
 
 ---
@@ -22,6 +21,9 @@ resources:
     }
     .legend text {
         vertical-align: middle;
+    }
+    .radio-group label {
+        margin-right: 20px; 
     }
 </style>
 
