@@ -11,18 +11,18 @@ d3.csv("data_d3.csv").then(function(data) {
     }));
 
     // Variables to store selected filters
-    let selectedDrinkingLevel = "Low";
+    let selectedDrinkingLevel = "< 1 drink per week";
     let filterAUD = false; // Default: include all individuals
 
     // Add headings to divide the page
-    d3.select("#plot1").insert("h2", ":first-child").text("Component 1: Drinking Levels → AUD Distribution");
-    d3.select("#plot2").insert("h2", ":first-child").text("Component 2: AUD → Drinking Level Distribution");
+    d3.select("#plot1").insert("h2", ":first-child").text("Drinking Levels → AUD Distribution");
+    d3.select("#plot2").insert("h2", ":first-child").text("AUD → Drinking Level Distribution");
 
     // Create controls for Component 1
     const controls1 = d3.select("#plot1").append("div").attr("class", "controls");
 
     // Radio buttons for drinking levels
-    const drinkingLevels = ["Low", "Moderate", "High"];
+    const drinkingLevels = ["< 1 drink per week", "2-7 drinks per week", "> 8 drinks per week"];
     controls1.selectAll("div.radio-group")
         .data(drinkingLevels)
         .enter()
@@ -63,12 +63,12 @@ d3.csv("data_d3.csv").then(function(data) {
         .attr("width", 600)
         .attr("height", 400);
 
-    const color1 = d3.scaleOrdinal().domain(["Yes", "No"]).range(["#66c2a5", "#fc8d62"]);
+    const color1 = d3.scaleOrdinal().domain(["With AUD", "Without AUD"]).range(["#66c2a5", "#fc8d62"]);
     const pie1 = d3.pie().value(d => d.value);
     const arc1 = d3.arc().innerRadius(0).outerRadius(150);
 
     const g1 = svg1.append("g")
-        .attr("transform", `translate(300,200)`);
+        .attr("transform", `translate(275,200)`);
 
     function updatePlot1() {
         let filtered = audData.filter(d => d.ALC_NUM_CATE === selectedDrinkingLevel);
@@ -90,7 +90,7 @@ d3.csv("data_d3.csv").then(function(data) {
             .remove();
 
         // Update legend
-        updateLegend(svg1, color1, ["Yes", "No"]);
+        updateLegend(svg1, color1, ["With AUD", "Without AUD"]);
     }
     updatePlot1(); // Initial plot
 
@@ -99,17 +99,17 @@ d3.csv("data_d3.csv").then(function(data) {
         .attr("width", 600)
         .attr("height", 400);
 
-    const color2 = d3.scaleOrdinal().domain(["Low", "Moderate", "High"]).range(["#66c2a5", "#fc8d62", "#8da0cb"]);
+    const color2 = d3.scaleOrdinal().domain(["< 1 drink per week", "2-7 drinks per week", "> 8 drinks per week"]).range(["#66c2a5", "#fc8d62", "#8da0cb"]);
     const pie2 = d3.pie().value(d => d.value);
     const arc2 = d3.arc().innerRadius(0).outerRadius(150);
 
     const g2 = svg2.append("g")
-        .attr("transform", `translate(300,200)`);
+        .attr("transform", `translate(275,200)`);
 
     function updatePlot2() {
         let filtered = filterAUD
-            ? audData.filter(d => d.ALC_DIS === "Yes")
-            : audData.filter(d => d.ALC_DIS === "No");
+            ? audData.filter(d => d.ALC_DIS === "With AUD")
+            : audData.filter(d => d.ALC_DIS === "Without AUD");
 
         const summary = d3.rollup(filtered, v => v.length, d => d.ALC_NUM_CATE);
         const chartData = Array.from(summary, ([key, value]) => ({ ALC_NUM_CATE: key, value }));
@@ -129,12 +129,12 @@ d3.csv("data_d3.csv").then(function(data) {
             .remove();
 
         // Update legend
-        updateLegend(svg2, color2, ["Low", "Moderate", "High"]);
+        updateLegend(svg2, color2, ["< 1 drink per week", "2-7 drinks per week", "> 8 drinks per week"]);
     }
     updatePlot2(); // Initial plot
 
     // Function to update legend
-    function updateLegend(svg, color, labels) {
+    /*function updateLegend(svg, color, labels) {
         const legend = svg.selectAll(".legend").data(labels);
 
         const legendGroup = legend.enter().append("g")
@@ -151,6 +151,26 @@ d3.csv("data_d3.csv").then(function(data) {
             .attr("y", 15)
             .text(d => d);
 
+        legend.exit().remove();
+    }*/
+    
+    function updateLegend(svg, color, labels) {
+        const legend = svg.selectAll(".legend").data(labels);
+    
+        const legendGroup = legend.enter().append("g")
+            .attr("class", "legend")
+            .attr("transform", (d, i) => `translate(450, ${i * 25 + 50})`); // Adjust spacing
+    
+        legendGroup.append("rect")
+            .attr("width", 20)
+            .attr("height", 20)
+            .attr("fill", d => color(d));
+    
+        legendGroup.append("text")
+            .attr("x", 20)
+            .attr("y", 15)
+            .text(d => d);
+    
         legend.exit().remove();
     }
 });
