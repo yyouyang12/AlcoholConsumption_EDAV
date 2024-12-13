@@ -6,15 +6,15 @@ execute:
   echo: true
 
 book:
-  title: "YOUR PROJECT TITLE"
+  title: "The relationship between health conditions and alcohol consumption"
   author:
-    - AUTHOR1 (UNI1)
-    - AUTHOR2 (UNI2)
-  repo-url: https://github.com/YOUR_GITHUB_ACCOUNT/REPO_NAME
+    - YUNYAN OUYANG (yo2384)
+    - BOSI HOU (bh2955)
+  repo-url: https://github.com/yyouyang12/AlcoholConsumption.git
   date: today
   page-footer:
     right: |
-      This book was built with <a href="https://quarto.org/">Quarto</a>.
+      This book was built with <a href=" ">Quarto</a >.
   repo-actions: [edit, issue]
   chapters:
     - index.qmd
@@ -25,7 +25,6 @@ book:
 
 format:
   html:
-    theme: cosmo
+    theme: Journal
     code-fold: true
-
 
