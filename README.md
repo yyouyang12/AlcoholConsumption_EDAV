@@ -23,4 +23,11 @@ The goal is to provide actionable insights and strategies for supporting individ
 
 ## Published
 
-December 12, 2024
+First Published on Novemner 20. Moved to this repository on December 12, 2024
+
+
+## Statement
+
+![Build Pipeline Failure Due to Submodule Path Error](issue.jpeg)
+
+Both of us in the group encountered the issue illustrated in this graph. We moved all project contents from the old repository to the new one. The project has been completed based on the homework requirements.
