@@ -18,7 +18,7 @@ The goal is to provide actionable insights and strategies for supporting individ
 
 ## Authors
 
--   **Yunyan Ouyang** ([Github link](https://github.com/yyouyang12))\
+-   **Yunyan Ouyang** ([Github link](https://github.com/yyouyang12))
 -   **Bosi Hou** ([Github link](https://github.com/bosihou))
 
 ## Published
